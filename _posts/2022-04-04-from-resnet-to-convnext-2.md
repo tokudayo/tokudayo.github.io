@@ -35,7 +35,7 @@ def resnet50(**kwargs: Any) -> ResNet:
 
 Technically, from this point forward it shouldn't be called ResNet-50 anymore, but we will keep the name til the end :)
 
-The second change is in the downsampling stem. ResNet uses a 7×7 convolution with stride 2, followed by a max-pooling with stride 2. Swin Transformer uses a "patchify" layer, which is a `4x4` non-overlapping convolution (stride 4) layer. We will use the same approach by modifying the stem:
+The second change is in the downsampling stem. ResNet uses a 7×7 convolution with stride 2, followed by a max-pooling with stride 2. Swin Transformer uses a "patchify" layer, which is a 4x4 non-overlapping convolution (stride 4) layer. We will use the same approach by modifying the stem:
 
 ```py
 ### In ResNet.__init__()

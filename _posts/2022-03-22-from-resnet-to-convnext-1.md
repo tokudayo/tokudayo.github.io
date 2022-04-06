@@ -149,7 +149,7 @@ class ResNet(nn.Module):
         return x
 ```
 
-The base width is 64. The width is doubled after each stage (`[64, 128, 256, 512]`). Larger ResNets (e.g. ResNet-101, ResNet-200) are obtained by increasing stage depths rather than width.
+The base width is 64. The width is doubled after each stage (`[64, 128, 256, 512]`). Larger ResNets (e.g. ResNet-101, ResNet-200) are obtained by increasing stage depths rather than the base width.
 
 We are missing two functions: `_make_stage` and `_init_weights`. The former is used to construct a stage, and the latter is used to initialize the weights. Both are pretty straightforward. For the `_make_stage` function, we just stack `num_blocks` blocks with width `width` together. The `stride` parameter is passed to the first block of the stage to downsample the input if needed. We also need projection layers for the first block. For weight initialization, we use He initialization[^9] for conv layers and init BN layers to have zero mean and unit variance:
 
@@ -204,7 +204,7 @@ Piece of cake, isn't it :)
 ### Training techniques
 ResNet was introduced in 2015. Since then, better training techniques have been developed. In the paper, the authors adopted a training procedure similar to that of DeiT and Swin Transformer; and saw a substantial improvement in performance, e.g., from 76.1% to 78.8% on ImageNet for ResNet-50. The full hyperparameters table is in Appendix A.1 of the paper.
 
-On ImageNet-1K, the batch size wass set to 4096, and the number of epochs was 300. Such batch size is much larger, and the training time is longer than original ResNets'. The authors used AdamW optimizer[^10]. Cosine learning rate decay was adopted, whereas in prior times, the learning rate had usually been either fixed; or decayed linearly/by step. The authors also used a warmup period of 20 epochs with linear growth to base learning rate.
+On ImageNet-1K, the batch size was set to 4096, and the number of epochs was 300. Such batch size is much larger, and the training time is longer than original ResNets'. The authors used AdamW optimizer[^10]. Cosine learning rate decay was adopted, whereas in prior times, the learning rate had usually been either fixed; or decayed linearly/by step. They also used a warmup period of 20 epochs with linear growth to base learning rate.
 
 [^10]: <https://arxiv.org/abs/1711.05101>
 
