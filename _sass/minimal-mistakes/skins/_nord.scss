@@ -1,0 +1,51 @@
+/* ==========================================================================
+   Dirt skin
+   ========================================================================== */
+
+/* Colors */
+$background-color: #ffffff !default;
+$text-color: #2E3440 !default;
+$muted-text-color: #434C5E !default;
+$primary-color: #2E3440 !default;
+$border-color: #cccccc !default;
+$footer-background-color: #2E3440 !default;
+$footer-text-color: #e5e9f0 !default;
+$link-color: #cc2637 !default;
+$masthead-link-color: $text-color !default;
+$masthead-link-color-hover: $text-color !default;
+$navicon-link-color-hover: mix(#fff, $text-color, 80%) !default;
+
+/* nord syntax highlighting (base16) */
+// $base00: #2E3440 !default;
+// $base01: #3B4252 !default;
+// $base02: #434C5E !default;
+// $base03: #4C566A !default;
+// $base04: #D8DEE9 !default;
+// $base05: #E5E9F0 !default;
+// $base06: #ECEFF4 !default;
+// $base07: #8FBCBB !default;
+// $base08: #88C0D0 !default;
+// $base09: #81A1C1 !default;
+// $base0a: #5E81AC !default;
+// $base0b: #D08770 !default;
+// $base0c: #BF616A !default;
+// $base0d: #EBCB8B !default;
+// $base0e: #A3BE8C !default;
+// $base0f: #B48EAD !default;
+
+// 20 base00 = "#2E3440" --> Default Background
+// 21 base01 = "#3B4252" --> Lighter Background (Used for status bars)
+// 22 base02 = "#434C5E" --> Selection Background
+// 23 base03 = "#4C566A" --> Comments, Invisibles, Line Highlighting
+// 24 base04 = "#D8DEE9" --> Dark Foreground (Used for status bars)
+// 25 base05 = "#E5E9F0" --> Default Foreground, Caret, Delimiters, Operators
+// 26 base06 = "#ECEFF4" --> Light Foreground (Not often used)
+// 27 base07 = "#8FBCBB" --> Light Background (Not often used)
+// 28 base08 = "#88C0D0" --> Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
+// 29 base09 = "#81A1C1" --> Integers, Boolean, Constants, XML Attributes, Markup Link Url
+// 30 base0A = "#5E81AC" --> Classes, Markup Bold, Search Text Background
+// 31 base0B = "#BF616A" --> Strings, Inherited Class, Markup Code, Diff Inserted
+// 32 base0C = "#D08770" --> Support, Regular Expressions, Escape Characters, Markup Quotes
+// 33 base0D = "#EBCB8B" --> Functions, Methods, Attribute IDs, Headings
+// 34 base0E = "#A3BE8C" --> Keywords, Storage, Selector, Markup Italic, Diff Changed
+// 35 base0F = "#B48EAD" --> Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
