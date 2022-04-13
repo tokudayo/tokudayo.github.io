@@ -103,7 +103,6 @@ self.head = nn.Sequential(
     nn.Flatten(),
     nn.Linear(widths[-1], num_classes)
 )
-
 ```
 
 ```py
