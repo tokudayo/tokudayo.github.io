@@ -287,11 +287,14 @@ if __name__ == '__main__':
 ```
 
 ### Sharing tensors
-`torch` make use of 2 sharing strategies for CPU tensors: file descriptor (default) and file system.
+`torch` makes use of 2 sharing strategies for CPU tensors: file descriptor (default) and file system.
 
-It is recommended to use `Queue` strategy above to share tensors between processes. The tensors must be in shared memory, and they will be automatically moved to shared memory once `Queue.put(tensor)` is called if they are not already. `Queue.get()` will return a handle to the tensor in shared memory.
+It is recommended to use the *queue* strategy above to share tensors between processes. The tensors must be in shared memory, and they will be automatically moved to shared memory once `Queue.put(tensor)` is called if they are not already. `Queue.get()` returns a handle to the tensor in shared memory.
 
-To move a tensor to shared memory, we can use `Tensor.share_memory_()`. This is a no-op if the tensor is already in shared memory, or if the tensor is a CUDA tensor. To check if a tensor is in shared memory, we can use `Tensor.is_shared()`.
+To manually move a tensor to shared memory, we can use `Tensor.share_memory_()`. This is a no-op if the tensor is already in shared memory, or if the tensor is a CUDA tensor. For `nn.Module`, we can move the module to shared memory by calling `.share_memory()`.
+
+To check if a tensor is in shared memory, we can use `Tensor.is_shared()`.
+
 
 ```python
 import torch.multiprocessing as mp
@@ -314,7 +317,7 @@ Again, when we put a tensor into the queue, it is automatically moved to shared 
 
 Note that if `Tensor.grad` is not `None`, it is also shared.
 
-If the provider process exits while a tensor is in shared queue, attempts to get the tensor will raise an exception. This makes sense, but it should get noted, and several users have ran into this problem.
+If the provider process exits while its tensor is still in a shared queue, attempts to get the tensor will raise an exception.
 
 ```python
 import torch
@@ -359,16 +362,14 @@ Runtime: 4.0 seconds
 ```
 The first tensor is consumed while the provider process (running `foo`) is still alive. The second tensor is consumed when the provider process already exited, thus raising an error.
 
-So make sure you consume the tensors in queue before the provider process exits, or employ some waiting mechanism on the provider side. Once the consumer got the tensor, the provider process can exit.
-
-For `nn.Module`, we can move the module to shared memory by calling `.share_memory()`.
+So make sure you consume the tensors in queue before the provider process exits, or employ some waiting mechanism on the provider side.
 
 ### Sharing CUDA tensors
 It is basically the same as above, but must be handled with a bit more care.
 
-CUDA tensors always use CUDA API, and that is the only mechanism through which CUDA tensors can be shared. `Tensor.share_memory_()` is a no-op for CUDA tensors.
+CUDA tensors always use the CUDA API, and that is the only mechanism through which CUDA tensors can be shared. `Tensor.share_memory_()` is a no-op for CUDA tensors.
 
-Unlike CPU tensors, it is required to keep the provider running as long as any consumer processes have references to a CUDA tensor. Once the consumer is done with the tensor, it should explicitly call `del` to release the memory.
+Unlike CPU tensors, it is required to keep the provider running as long as any consumer processes have references to a CUDA tensor. Once the consumer is done with the tensor, it should explicitly call `del` to release the memory. The following example is a bad practice:
 
 ```python
 import torch
@@ -401,7 +402,37 @@ if __name__ == "__main__":
 [W CudaIPCTypes.cpp:15] Producer process has been terminated before all shared CUDA tensors released. See Note [Sharing CUDA tensors]
 Received torch.Size([20, 20])
 ```
-This is a "bad usage" example. It only triggers a warning, but there might be serious issues in other cases.
+
+### `spawn`
+Creating multiple processes is hideous. If we want to start multiple processes running a function, we can do it like this:
+```python
+import torch.multiprocessing as mp
+
+def foo():
+    pass
+
+if __name__ == "__main__":
+    num_proc = 4
+    processes = [mp.Process(target=foo)]
+    for proc in processes:
+        proc.start()
+    for proc in processes:
+        proc.join()
+```
+The problem lies in the *join* part. If the first process does not terminate, the termination of others will go unnoticed; and there are no facilities for error propagation.
+
+`spawn` takes care of error propagation, out of order termination, and will actively terminate processes upon detecting an error in one of them.
+```python
+import torch.multiprocessing as mp
+
+def foo(idx):
+    pass
+
+if __name__ == "__main__":
+    mp.spawn(foo, args=(), nprocs=4, join=True)
+```
+The function `fn` passed to `spawn` (`foo` in this case) will be called as `fn(idx, *args)`, where `idx` is the index of the process.
+```
 
 ## Closing remarks
 The knowledge covered in this post should familiarize you with basic multiprocessing in Python/PyTorch. Checkout the next [post](https://www.youtube.com/watch?v=dQw4w9WgXcQ) of the series where we will discuss distributed communication in PyTorch.
