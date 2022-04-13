@@ -16,6 +16,23 @@ $masthead-link-color-hover: $text-color !default;
 $navicon-link-color-hover: mix(#fff, $text-color, 80%) !default;
 
 /* nord syntax highlighting (base16) */
+$base00: #263238 !default;
+$base01: #2e3c43 !default;
+$base02: #314549 !default;
+$base03: #546e7a !default;
+$base04: #b2ccd6 !default;
+$base05: #eeffff !default;
+$base06: #eeffff !default;
+$base07: #ffffff !default;
+$base08: #f07178 !default;
+$base09: #f78c6c !default;
+$base0a: #ffcb6b !default;
+$base0b: #c3e88d !default;
+$base0c: #89ddff !default;
+$base0d: #82aaff !default;
+$base0e: #c792ea !default;
+$base0f: #ff5370 !default;
+
 // $base00: #2E3440 !default;
 // $base01: #3B4252 !default;
 // $base02: #434C5E !default;
@@ -24,14 +41,14 @@ $navicon-link-color-hover: mix(#fff, $text-color, 80%) !default;
 // $base05: #E5E9F0 !default;
 // $base06: #ECEFF4 !default;
 // $base07: #8FBCBB !default;
-// $base08: #88C0D0 !default;
-// $base09: #81A1C1 !default;
-// $base0a: #5E81AC !default;
-// $base0b: #D08770 !default;
-// $base0c: #BF616A !default;
-// $base0d: #EBCB8B !default;
-// $base0e: #A3BE8C !default;
-// $base0f: #B48EAD !default;
+// $base08: #BF616A !default;
+// $base09: #D08770 !default;
+// $base0a: #EBCB8B !default;
+// $base0b: #A3BE8C !default;
+// $base0c: #88C0D0 !default;
+// $base0d: #81A1C1 !default;
+// $base0e: #B48EAD !default;
+// $base0f: #5E81AC !default;
 
 // 20 base00 = "#2E3440" --> Default Background
 // 21 base01 = "#3B4252" --> Lighter Background (Used for status bars)
