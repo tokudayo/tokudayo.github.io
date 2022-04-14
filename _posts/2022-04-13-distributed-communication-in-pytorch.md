@@ -10,12 +10,10 @@ tags:
 
 This is the second part of a 3-part series covering multiprocessing, distributed communication, and distributed training in PyTorch.
 
-In this post we will take a look at the distribued communication features in PyTorch via the `torch.distributed` module.
+In this article we will take a look at the distribued communication features in PyTorch via the `torch.distributed` module.
 
 ### What `torch.distributed` is
 The package provides means of communication between processes running on different computation nodes, either on the same machine or on different machines (e.g. in a cluster). `DistributedDataParallel` is built on top of `torch.distributed` and provides a convenient way to run models on multiple GPUs.
-
-The official documentation is [here](https://pytorch.org/docs/stable/distributed.html).
 
 
 ### Initialization
@@ -46,12 +44,12 @@ torch.distributed.init_process_group(
 The `backend` parameter can take one of the following values: `'gloo'`, `'nccl'`, or `'mpi'`.
 
 There are two ways to initialize the process group:
-- Create a distributed key-value store: `HashStore` (can only be used within a process), `TCPStore`, or `FileStore`; and then pass the store, world size, and rank to `init_process_group`.
-- Specify `init_method` (a URL string) which indicates where/how to discover peers. Optionally specify `rank` and `world_size`, or encode all required parameters in the URL and omit them.
+1. Create a distributed key-value store: `HashStore` (can only be used within a process), `TCPStore`, or `FileStore`; and then pass the store, world size, and rank to `init_process_group`.
+2. Specify `init_method` (a URL string) which indicates where/how to discover peers. Optionally specify `rank` and `world_size`, or encode all required parameters in the URL and omit them.
 
 For the second—and also more common—way, we will take a look at the two supported initialization methods, using TCP and shared file system:
 
-##### Shared file system
+1. **Shared file system**: 
 If there exists a file system that is visible to all nodes, we can use it to initialize the process group.
 
 ```python
@@ -63,7 +61,7 @@ dist.init_process_group(backend, init_method='file:///mnt/nfs/sharedfile',
 
 I have never seen this in practice though. Maybe I haven't seen enough.
 
-##### TCP
+2. **TCP**: 
 The more common way to initialize the process group is to use TCP. We can encode some or all information in a URL string, or set the environment variables `MASTER_ADDR` and `MASTER_PORT` for each node. The second method works because if not specified (and `store` is `None`), the `init_method` will be set to `env://` by default.
 
 ```python
@@ -155,3 +153,96 @@ def main(rank, size):
 We should neither modify the sent tensor nor access the received tensor until the communication is complete. Doing so will result in undefined behavior.
 
 #### Collective communication
+The scalability of distributed computation is achieved by making use of collective communication. Collective communication involves multiple senders and/or receivers among a *process group*. Some common collective operations, in context of communicating tensors, include:
+
+**Broadcast**: A tensor is broadcasted to all processes in the process group.
+
+![image-center]({{ site.url }}{{ site.baseurl }}/assets/images/torchdist/broadcast.png){: .align-center}
+
+**Scatter**: A list of tensors is scattered to all processes in the process group.
+
+![image-center]({{ site.url }}{{ site.baseurl }}/assets/images/torchdist/scatter.png){: .align-center}
+
+**Gather**: Gathers a list of tensors, one from each process, into a destination process.
+
+![image-center]({{ site.url }}{{ site.baseurl }}/assets/images/torchdist/gather.png){: .align-center}
+
+**Reduce**: Reduces a list of tensors, one from each processes, into a single tensor on a destination process. The figure below shows the case when the reduction operation is addition.
+
+![image-center]({{ site.url }}{{ site.baseurl }}/assets/images/torchdist/reduce.png){: .align-center}
+
+**All-gather**: Performs an all-gather operation among all processes in the process group.
+
+![image-center]({{ site.url }}{{ site.baseurl }}/assets/images/torchdist/allgather.png){: .align-center}
+
+**All-reduce**: Performs reduction across all processes in the process group.
+
+![image-center]({{ site.url }}{{ site.baseurl }}/assets/images/torchdist/allreduce.png){: .align-center}
+
+`torch.distributed` supports all of these collective operations, and more.
+
+For example, let's write the training part of a distributed training application.
+
+```python
+import torch
+import torch.distributed as dist
+
+...
+
+def main(rank, size):
+    # Init process group
+    dist.init_process_group('gloo', rank=rank, world_size=size)
+    # Manual seed to make sure all processes start with the same model
+    torch.manual_seed(1337)
+
+    net = torch.nn.Linear(10, 1)
+    loader = get_dataloader()
+    loss_fn = torch.nn.MSELoss()
+    optimizer = torch.optim.SGD(net.parameters(), lr=0.01)
+
+    for epoch in range(10):
+        for X, y in loader:
+            y_pred = net(X)
+            loss = loss_fn(y_pred, y)
+            # All-reduce 
+            for p in net.parameters():
+                dist.all_reduce(p.grad.data, op=dist.ReduceOp.SUM)
+                p.grad /= size
+            optimizer.step()
+```
+
+The all-reduce operation is used to synchronize updates across all processes. We used the `SUM` operation in this case, then divide the gradients by the world size to get the average gradient. `dist.ReduceOp` supports `SUM`, `AVG`, `PRODUCT`, `MIN`, `MAX`, `BAND`, `BOR`, and `BXOR` operations out of the box. `BAND`, `BOR`, and `BXOR` are not available for NCCL backend, and `AVG` is only available for NCCL backend; thus we did not use `AVG` in this example.
+
+This is, however, just a naive implementation. `DistributedDataParallel` is much more well-optimized, efficient, and well-tested. We will see how to use it and discuss some of its engineering details in the next article.
+
+#### Groups
+By default, collective communication is performed among the *default group*, that is the world. For fine-grained control, we can create a group and pass it to the `group` argument of any of the collective operations.
+
+```python
+import torch
+import torch.distributed as dist
+
+...
+
+# World size 4
+def main(rank, size):
+    dist.init_process_group('gloo', rank=rank, world_size=size)
+    group = dist.new_group(ranks=[0, 1])
+    tensor = torch.randn(4, 4)
+    # Call all-reduce on this group only
+    dist.all_reduce(tensor, group=group, op=dist.ReduceOp.SUM)
+    print(tensor.sum())
+```
+```
+tensor(-0.6806)
+tensor(-0.6806)
+tensor(0.6597)
+tensor(-1.3549)
+```
+
+The `all_reduce` op was called on the group of rank 0 and 1, thus after the reduction, tensors of these 2 processes have the same value (thus the same sum).
+
+### Closing remarks
+This much about distributed communication should be enough to get you started! For more resources, check out the module [documentation](https://pytorch.org/docs/stable/distributed.html) and PyTorch's writing distributed application [tutorial](https://pytorch.org/tutorials/intermediate/dist_tuto.html).
+
+See you the next [article](/distributed-communication-in-pytorch) where we will dive into the magic of `DistributedDataParallel`!
