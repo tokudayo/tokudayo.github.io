@@ -353,10 +353,10 @@ def convnext_xl(**kwargs: Any) -> ConvNext:
 The final code is [here](https://gist.github.com/tokudayo/c59277ae0d9637d2d325da2524476947)!
 
 ## Closing remarks
-In this post, we gradually modified the ResNet architecture to achieve ConvNeXt, following the roadmap of the [original paper](https://arxiv.org/abs/2201.03545).
+In this article, we gradually modified the ResNet architecture to achieve ConvNeXt, following the roadmap of the [original paper](https://arxiv.org/abs/2201.03545).
 
 For the benchmarks, as well as ablation studies, great insights, and more discussion on the architecture, I encourage you to read the original paper and, of course, have a look at the [official repository](https://github.com/facebookresearch/ConvNeXt).
 
 The thing I like about ConvNeXt is that the authors gave sensible reasons for the design decisions, either to pursue an pure ConvNet architecture that borrow "good" designs and traits of vision Transformers, or to adopt techniques in the ConvNet field that have been proven to work. The final result is a collective knowledge of years of research, as the authors said, *"[the changes made] are not novel even in the ConvNet literature — they have all been researched separately, but not collectively, over the last decade"*.
 
-It is always great fun for me to try these things out, and I hope you enjoyed the posts and learned something new from them!
+It is always great fun for me to try these things out, and I hope you enjoyed the series and learned something new from them!

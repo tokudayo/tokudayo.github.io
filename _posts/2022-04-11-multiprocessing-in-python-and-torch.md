@@ -10,7 +10,7 @@ tags:
 
 This is the first part of a 3-part series covering multiprocessing, distributed communication, and distributed training in PyTorch.
 
-In this post, we will cover the basics of multiprocessing in Python first, then move on to PyTorch; so even if you don't use PyTorch, you may still find helpful resources here :)
+In this article, we will cover the basics of multiprocessing in Python first, then move on to PyTorch; so even if you don't use PyTorch, you may still find helpful resources here :)
 
 Multiprocessing is process-level parallelism, in the sense that each spawned process is allocated seperate memory and resources. In Python, in many cases, multiprocessing is used to bypass the infamous GIL, which is a global lock that prevents the interpreter from running any other code while it is executing a single thread.
 
@@ -435,4 +435,4 @@ The function `fn` passed to `spawn` (`foo` in this case) will be called as `fn(i
 ```
 
 ## Closing remarks
-The knowledge covered in this post should familiarize you with basic multiprocessing in Python/PyTorch. Checkout the next [post](https://www.youtube.com/watch?v=dQw4w9WgXcQ) of the series where we will discuss distributed communication in PyTorch.
+The knowledge covered in this article should familiarize you with basic multiprocessing in Python/PyTorch. Checkout the next [article](/distributed-communication-in-pytorch) of the series where we will discuss distributed communication in PyTorch.

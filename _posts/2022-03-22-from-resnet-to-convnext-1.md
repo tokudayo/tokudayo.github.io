@@ -208,7 +208,7 @@ On ImageNet-1K, the batch size was set to 4096, and the number of epochs was 300
 
 [^10]: <https://arxiv.org/abs/1711.05101>
 
-Modern augmentation and regularization techniques were used. Nowadays, commonly used augmentations for pre-training and fine-tuning on image classification datasets include AutoAugment[^11]/RandAugment[^12], Mixup[^13], CutMix[^14], etc. Detailed discussion on these techniques may be found in a future post :) Some techniques used solely for regularization include label smoothing, stochastic depth[^15], weight decay, and model EMA.
+Modern augmentation and regularization techniques were used. Nowadays, commonly used augmentations for pre-training and fine-tuning on image classification datasets include AutoAugment[^11]/RandAugment[^12], Mixup[^13], CutMix[^14], etc. Detailed discussion on these techniques may be found in a future article :) Some techniques used solely for regularization include label smoothing, stochastic depth[^15], weight decay, and model EMA.
 
 [^11]: <https://arxiv.org/abs/1805.09501>
 [^12]: <https://arxiv.org/abs/1909.13719>
@@ -274,4 +274,4 @@ and add a parameter `stodepth_survive` to `__init__` of `ResNet`. The final resu
 <script src="https://gist.github.com/tokudayo/a788de155f22b5e40ae7bd90ae781391.js"></script>
 
 ## Closing remarks
-In this post, we have reviewed ResNet's architecture and implementation, as well as a modern training recipe used in ConvNeXt. This will be the foundation for the next part of the series, where we will discuss and implement the *modernizing roadmap* from ResNet to ConvNeXt.
+In this article, we have reviewed ResNet's architecture and implementation, as well as a modern training recipe used in ConvNeXt. This will be the foundation for the next part of the series, where we will discuss and implement the *modernizing roadmap* from ResNet to ConvNeXt.
