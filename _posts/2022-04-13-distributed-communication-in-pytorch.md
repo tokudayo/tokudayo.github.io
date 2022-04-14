@@ -41,7 +41,7 @@ torch.distributed.init_process_group(
 )
 ```
 
-The `backend` parameter can take one of the following values: `'gloo'`, `'nccl'`, or `'mpi'`.
+The `backend` parameter can take one of the following values: `'gloo'`, `'nccl'`, or `'mpi'`. `rank` is the rank, or index, of the current process, with rank 0 usually being the master process. `world_size` is the number of total processes.
 
 There are two ways to initialize the process group:
 1. Create a distributed key-value store: `HashStore` (can only be used within a process), `TCPStore`, or `FileStore`; and then pass the store, world size, and rank to `init_process_group`.
