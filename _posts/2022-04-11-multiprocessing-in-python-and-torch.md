@@ -432,7 +432,7 @@ if __name__ == "__main__":
     mp.spawn(foo, args=(), nprocs=4, join=True)
 ```
 The function `fn` passed to `spawn` (`foo` in this case) will be called as `fn(idx, *args)`, where `idx` is the index of the process.
-```
 
 ## Closing remarks
+
 The knowledge covered in this article should familiarize you with basic multiprocessing in Python/PyTorch. Checkout the next [article](/distributed-communication-in-pytorch) of the series where we will discuss distributed communication in PyTorch.
