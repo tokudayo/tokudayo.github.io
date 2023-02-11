@@ -1,5 +1,5 @@
 ---
-title: "From Resnet to ConvNeXt (Part 2): Modernizing a vanilla ResNet"
+title: "From Resnet to ConvNeXt (Part 2): Modernizing a Vanilla ResNet"
 excerpt: "Progression from ResNet to ConvNeXt, step by step explained with code in PyTorch."
 header:
   teaser: "assets/images/torch.png"

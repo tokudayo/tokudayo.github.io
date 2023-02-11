@@ -1,5 +1,5 @@
 ---
-title: "From Resnet to ConvNeXt (Part 1): ResNet with better training techniques"
+title: "From Resnet to ConvNeXt (Part 1): ResNet with Better Training Techniques"
 excerpt: "Motivation of the paper and a refresher on ResNet with better training techniques, in PyTorch."
 header:
   teaser: "assets/images/torch.png"

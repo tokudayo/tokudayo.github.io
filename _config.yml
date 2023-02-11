@@ -85,7 +85,7 @@ analytics:
 author:
   name             : *name # *name is a YAML reference pointing to the &anchor earlier
   avatar           : "/assets/images/blob.png"
-  bio              : "Just a part time writer."
+  bio              : "I write what I like."
   location         : "Hanoi"
   links:
     - label: "Site"
